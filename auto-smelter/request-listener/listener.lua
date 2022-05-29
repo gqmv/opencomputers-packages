@@ -1,6 +1,6 @@
 local component = require("component")
 
-local required_components = ["waypoint", "me_interface", "inventory_controller"]
+local required_components = {"waypoint", "me_interface", "inventory_controller"}
 
 local function getComponentsTable(required_components)
     local components = {}
