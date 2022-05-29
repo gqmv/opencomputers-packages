@@ -4,7 +4,7 @@ local required_components = {"waypoint", "me_interface", "inventory_controller"}
 
 local function getComponentsTable(required_components)
     local components = {}
-    for component_name in required_components do
+    for i, component_name in pairs(required_components) do
         local current_component = []
         for address, name in component.list(component_name, true) do
             current_component.push(component.proxy(address))
@@ -18,7 +18,7 @@ local function getComponentsTable(required_components)
     end
 
     return components
-
+end
 
 local components = getComponentsTable(required_components)
 
