@@ -22,4 +22,4 @@ local function getComponentsTable(required_components)
 
 local components = getComponentsTable(required_components)
 
-print(components)
+print(components["waypoint"].address)
