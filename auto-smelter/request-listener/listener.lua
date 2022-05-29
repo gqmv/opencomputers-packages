@@ -10,7 +10,7 @@ local function getComponentsTable(required_components)
             current_component.push(component.proxy(address))
         end
         
-        if current_component.length != 0 then
+        if current_component.length ~= 0 then
             error("No " .. component_name .. " components found")
         end
 
