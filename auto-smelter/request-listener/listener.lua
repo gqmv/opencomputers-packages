@@ -27,6 +27,7 @@ local function findChestPosition()
         error("No chest found")
     end
 
+    print("Chest found on side " .. chest_side)
     return chest_side
 end
 
@@ -50,9 +51,9 @@ local function getRecipe()
         io.read()
         for i = 1, components.inventory_controller.getInventorySize(chest_side) do
             local item = components.inventory_controller.getStackInSlot(chest_side, i)
-            local item_name = item.name
-            local item_count = item.size
             if item ~= nil then
+                local item_name = item.name
+                local item_count = item.size
                 table.insert(recipe.input, {name = item_name, count = item_count})
             end
         end
