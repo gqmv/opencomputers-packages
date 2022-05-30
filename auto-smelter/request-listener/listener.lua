@@ -65,21 +65,21 @@ local function getRecipe()
         file:close()
     else
         print("No recipe file found.\n")
-        local recipe = {input = {}, output = {}}
+        local recipe = {}
 
         local chest_side = findChestPosition()
         print("Please insert the input items into the chest")
         print("Press enter when finished")
         io.read()
         local items_in_chest, items_count = getItemsInChest()
-        table.insert(recipe.input, items_in_chest)
+        recipe.input = items_in_chest
         recipe.input_count = items_count
 
         print("Please insert the output items into the chest")
         print("Press enter when finished")
         io.read()
         local items_in_chest, items_count = getItemsInChest()
-        table.insert(recipe.output, items_in_chest)
+        recipe.output = items_in_chest
         recipe.output_count = items_count
         
         local file = io.open(recipe_filename, "w")
