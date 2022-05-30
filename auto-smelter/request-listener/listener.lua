@@ -2,13 +2,33 @@ local component = require("component")
 local fs = require("filesystem")
 local serialization = require("serialization")
 local shell = require("shell")
+local sides = require("sides")
 
 local requiredComponents = require("required_components")
 
-local required_components = {"waypoint", "me_interface", "inventory_controller"}
+local required_components = {"waypoint", "inventory_controller"}
 
 
 local components = requiredComponents.getComponentsTable(required_components)
+
+local function findChestPosition()
+    local sides_count = 5
+    local max_size = 0
+    local chest_side = nil
+    for i = 0, sides_count do
+        if components.inventory_controller.getInventorySize(i) > max_size then
+            max_size = components.inventory_controller.getInventorySize(i)
+            chest_side = i
+        end
+    end
+
+    if chest_side == nil then
+        error("No chest found")
+    end
+
+    return chest_side
+end
+
 
 local function getRecipe()
     recipe = nil
@@ -23,24 +43,29 @@ local function getRecipe()
         print("No recipe file found.\n")
         local recipe = {input = {}, output = {}}
 
-        print("How many items are necessary for this recipe?\n")
-        local recipe_input_size = tonumber(io.stdin:read())
-        for i = 1, recipe_input_size do
-             print("What is the name of the item?\n")
-             local item_name = io.stdin:read()
-             print("How many " .. item_name .. " are necessary?\n")
-             local item_count = tonumber(io.stdin:read())   
-             table.insert(recipe.input, {name = item_name, count = item_count})
+        local chest_side = findChestPosition()
+        print("Please insert the input items into the chest")
+        print("Press enter when finished")
+        io.read()
+        for i = 1, components.inventory_controller.getInventorySize(chest_side) do
+            local item = components.inventory_controller.getStackInSlot(chest_side, i)
+            local item_name = item.name
+            local item_count = item.size
+            if item ~= nil then
+                table.insert(recipe.input, {name = item_name, count = item_count})
+            end
         end
 
-        print("How many items are produced?\n")
-        local recipe_output_size = tonumber(io.stdin:read())
-        for i = 1, recipe_output_size do
-             print("What is the name of the item?\n")
-             local item_name = io.stdin:read()
-             print("How many " .. item_name .. " are produced?\n")
-             local item_count = tonumber(io.stdin:read())   
-             table.insert(recipe.output, {name = item_name, count = item_count})
+        print("Please insert the output items into the chest")
+        print("Press enter when finished")
+        io.read()
+        for i = 1, components.inventory_controller.getInventorySize(chest_side) do
+            local item = components.inventory_controller.getStackInSlot(chest_side, i)
+            local item_name = item.name
+            local item_count = item.size
+            if item ~= nil then
+                table.insert(recipe.output, {name = item_name, count = item_count})
+            end
         end
         
         local file = io.open(recipe_filename, "w")
@@ -52,12 +77,19 @@ local function getRecipe()
 end
 
 local recipe = getRecipe()
-print(recipe)
-       
-    
 
+print("Successfully loaded the following recipe:")
 
+print("Inputs:")
+for i, input in pairs(recipe.input) do
+    print(input.name .. ": " .. input.count)
+end
 
+local output_string = ""
+print("Outputs:")
+for i, output in pairs(recipe.output) do
+    output_string = output_string .. output.name
+    print(output.name .. ": " .. output.count)
+end
 
-
-
+components.waypoint.setLabel(output_string)
