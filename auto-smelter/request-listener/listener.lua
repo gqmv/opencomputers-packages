@@ -55,13 +55,12 @@ end
 
 
 local function getRecipe()
-    recipe = nil
     local recipe_filename = "recipe"
     local recipe_path = shell.getWorkingDirectory() .. "/" .. recipe_filename
 
     if fs.exists(recipe_path) then
         local file = io.open(recipe_filename, "r")
-        recipe = serialization.unserialize(file:read("*a"))
+        local recipe = serialization.unserialize(file:read("*a"))
         file:close()
     else
         print("No recipe file found.\n")
