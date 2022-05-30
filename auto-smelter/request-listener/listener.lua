@@ -18,27 +18,26 @@ local function getRecipe()
         recipe = serialization.unserialize(file:read("*a"))
         file:close()
     else
-        print("ola")
-        io.stdout.write("No recipe file found.\n")
+        print("No recipe file found.\n")
         local recipe = {input = {}, output = {}}
 
-        io.stdout.write("How many items are necessary for this recipe?\n")
-        local recipe_input_size = tonumber(io.stdin.read())
+        print("How many items are necessary for this recipe?\n")
+        local recipe_input_size = tonumber(io.stdin:read())
         for i = 1, recipe_input_size do
-             io.stdout.write("What is the name of the item?\n")
-             local item_name = io.stdin.read()
-             io.stdout.write("How many " .. item_name .. " are necessary?\n")
-             local item_count = tonumber(io.stdin.read())   
+             print("What is the name of the item?\n")
+             local item_name = io.stdin:read()
+             print("How many " .. item_name .. " are necessary?\n")
+             local item_count = tonumber(io.stdin:read())   
              table.insert(recipe.input, {name = item_name, count = item_count})
         end
 
-        io.stdout.write("How many items are produced?\n")
-        local recipe_output_size = tonumber(io.stdin.read())
+        print("How many items are produced?\n")
+        local recipe_output_size = tonumber(io.stdin:read())
         for i = 1, recipe_output_size do
-             io.stdout.write("What is the name of the item?\n")
-             local item_name = io.stdin.read()
-             io.stdout.write("How many " .. item_name .. " are produced?\n")
-             local item_count = tonumber(io.stdin.read())   
+             print("What is the name of the item?\n")
+             local item_name = io.stdin:read()
+             print("How many " .. item_name .. " are produced?\n")
+             local item_count = tonumber(io.stdin:read())   
              table.insert(recipe.output, {name = item_name, count = item_count})
         end
         
