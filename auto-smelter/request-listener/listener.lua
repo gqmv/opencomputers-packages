@@ -6,10 +6,23 @@ local sides = require("sides")
 
 local requiredComponents = require("required_components")
 
-local required_components = {"waypoint", "inventory_controller"}
+local required_components = { "waypoint", "inventory_controller", "redstone" }
+local redstone_all_sides_on = { 1, 1, 1, 1, 1 }
+local redstone_all_sides_off = { 0, 0, 0, 0, 0 }
 
 
 local components = requiredComponents.getComponentsTable(required_components)
+
+
+local function allowItemInput()
+    components.redstone.setOutput(redstone_all_sides_on)
+end
+
+
+local function denyItemInput()
+    components.redstone.setOutput(redstone_all_sides_off)
+end
+
 
 local function findChestPosition()
     local sides_count = 5
@@ -31,8 +44,7 @@ local function findChestPosition()
     return chest_side
 end
 
-
-chest_side = findChestPosition()
+local chest_side = findChestPosition()
 
 
 local function getItemsInChest()
@@ -52,7 +64,6 @@ local function getItemsInChest()
 
     return items, items_count
 end
-
 
 local function getRecipe()
     local recipe = {}
@@ -80,7 +91,7 @@ local function getRecipe()
         local items_in_chest, items_count = getItemsInChest()
         recipe.output = items_in_chest
         recipe.output_count = items_count
-        
+
         local file = io.open(recipe_filename, "w")
         file:write(serialization.serialize(recipe))
         file:close()
@@ -89,22 +100,35 @@ local function getRecipe()
     return recipe
 end
 
-
 local function waitForCraft(recipe)
     local craftReady = false
+    local craftAmount = nil
     while not craftReady do
-        local items, items_count = getItemsInChest()
-        if items_count == recipe.input_count then
-            craftReady = true
-            for name, count in pairs(recipe.input) do
-                if items[name] ~= count then
-                    craftReady = false
-                end
+        allowItemInput()
+        os.sleep(5)
+        denyItemInput()
+        local items_in_chest, items_count = getItemsInChest()
+        
+        craftReady = true
+        craftAmount = nil
+        for item_name, item_count in pairs(recipe.input) do
+            if items_in_chest[item_name] % recipe.input[item_name] ~= 0 then
+                craftReady = false
+                break
+            end
+
+            if craftAmount == nil then
+                craftAmount = items_in_chest[item_name] / recipe.input[item_name]
+            end
+
+            if craftAmount ~= items_in_chest[item_name] / recipe.input[item_name] then
+                craftReady = false
+                break
             end
         end
 
         if items_count > recipe.input_count then
-            error("The number of item types in the chest surpasses the number of item types in the recipe")
+            error("The chest contains more types of items than the recipe requires")
         end
     end
 end
