@@ -10,7 +10,7 @@ local required_components = {"waypoint", "me_interface", "inventory_controller"}
 local components = requiredComponents.getComponentsTable(required_components)
 
 local function getRecipe()
-    local recipe = nil
+    recipe = nil
     local recipe_path = "recipe"
 
     if fs.exists(recipe_path) then
