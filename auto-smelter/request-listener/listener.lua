@@ -43,6 +43,7 @@ local function getRecipe()
         
         local file = io.open(recipe_path, "w")
         local ser = serialization.serialize(recipe)
+        print(ser)
         file:write(ser)
         file:close()
     end
