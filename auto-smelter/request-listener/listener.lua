@@ -41,13 +41,12 @@ local function getItemsInChest()
     for i = 1, components.inventory_controller.getInventorySize(chest_side) do
         local item = components.inventory_controller.getStackInSlot(chest_side, i)
         if item ~= nil then
-            local item_name = item.name
-            if items.item_name == nil then
-                items.item_name = 0
+            if items[item.name] == nil then
+                items.[item.name] = 0
                 items_count = items_count + 1
             end
 
-            items.item_name = items.item_name + item.size
+            items[item.name] = items[item.name] + item.size
         end
     end
 
