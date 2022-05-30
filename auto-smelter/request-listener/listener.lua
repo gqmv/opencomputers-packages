@@ -42,7 +42,8 @@ local function getRecipe()
         end
         
         local file = io.open(recipe_path, "w")
-        file:write(serialization.serialize(recipe))
+        local ser = serialization.serialize(recipe)
+        file:write(ser)
         file:close()
     end
 
