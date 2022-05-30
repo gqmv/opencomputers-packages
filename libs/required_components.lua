@@ -1,6 +1,6 @@
 local requiredComponents = {}
 
-local components = requires("components")
+local component = require("component")
 
 function requiredComponents.getComponentsTable(required_components)
     local components = {}
