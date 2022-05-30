@@ -16,7 +16,8 @@ local function findChestPosition()
     local max_size = 0
     local chest_side = nil
     for i = 0, sides_count do
-        if components.inventory_controller.getInventorySize(i) > max_size then
+        local size = components.inventory_controller.getInventorySize(i)
+        if size ~= nil and size > max_size then
             max_size = components.inventory_controller.getInventorySize(i)
             chest_side = i
         end
