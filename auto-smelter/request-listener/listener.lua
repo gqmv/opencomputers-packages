@@ -55,16 +55,16 @@ end
 
 
 local function getRecipe()
+    local recipe = {}
     local recipe_filename = "recipe"
     local recipe_path = shell.getWorkingDirectory() .. "/" .. recipe_filename
 
     if fs.exists(recipe_path) then
         local file = io.open(recipe_filename, "r")
-        local recipe = serialization.unserialize(file:read("*a"))
+        recipe = serialization.unserialize(file:read("*a"))
         file:close()
     else
         print("No recipe file found.\n")
-        local recipe = {}
 
         local chest_side = findChestPosition()
         print("Please insert the input items into the chest")
