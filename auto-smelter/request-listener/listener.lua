@@ -1,6 +1,7 @@
 local component = require("component")
 local fs = require("filesystem")
 local serialization = require("serialization")
+local shell = require("shell")
 
 local requiredComponents = require("required_components")
 
@@ -11,10 +12,11 @@ local components = requiredComponents.getComponentsTable(required_components)
 
 local function getRecipe()
     recipe = nil
-    local recipe_path = "recipe"
+    local recipe_filename = "recipe"
+    local recipe_path = shell.getWorkingDirectory() .. "/" .. recipe_filename
 
     if fs.exists(recipe_path) then
-        local file = io.open(recipe_path, "r")
+        local file = io.open(recipe_filename, "r")
         recipe = serialization.unserialize(file:read("*a"))
         file:close()
     else
@@ -41,7 +43,7 @@ local function getRecipe()
              table.insert(recipe.output, {name = item_name, count = item_count})
         end
         
-        local file = io.open(recipe_path, "w")
+        local file = io.open(recipe_filename, "w")
         file:write(serialization.serialize(recipe))
         file:close()
     end
