@@ -32,6 +32,24 @@ local function findChestPosition()
 end
 
 
+local function getItemsInChest()
+    local chest_side = findChestPosition()
+    items = {}
+    for i = 1, components.inventory_controller.getInventorySize(chest_side) do
+        local item = components.inventory_controller.getStackInSlot(chest_side, i)
+        if item ~= nil then
+            if items[item.name] == nil then
+                items[item.name] = 0
+            end
+
+            items[item.name] = items[item.name] + item.size
+        end
+    end
+
+    return items
+end
+
+
 local function getRecipe()
     recipe = nil
     local recipe_filename = "recipe"
@@ -49,26 +67,12 @@ local function getRecipe()
         print("Please insert the input items into the chest")
         print("Press enter when finished")
         io.read()
-        for i = 1, components.inventory_controller.getInventorySize(chest_side) do
-            local item = components.inventory_controller.getStackInSlot(chest_side, i)
-            if item ~= nil then
-                local item_name = item.name
-                local item_count = item.size
-                table.insert(recipe.input, {name = item_name, count = item_count})
-            end
-        end
+        table.insert(recipe.input, getItemsInChest())
 
         print("Please insert the output items into the chest")
         print("Press enter when finished")
         io.read()
-        for i = 1, components.inventory_controller.getInventorySize(chest_side) do
-            local item = components.inventory_controller.getStackInSlot(chest_side, i)
-            local item_name = item.name
-            local item_count = item.size
-            if item ~= nil then
-                table.insert(recipe.output, {name = item_name, count = item_count})
-            end
-        end
+        table.insert(recipe.output, getItemsInChest())
         
         local file = io.open(recipe_filename, "w")
         file:write(serialization.serialize(recipe))
