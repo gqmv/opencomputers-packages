@@ -32,21 +32,25 @@ local function findChestPosition()
 end
 
 
+chest_side = findChestPosition()
+
+
 local function getItemsInChest()
-    local chest_side = findChestPosition()
-    items = {}
+    local items = {}
+    local items_count = 0
     for i = 1, components.inventory_controller.getInventorySize(chest_side) do
         local item = components.inventory_controller.getStackInSlot(chest_side, i)
         if item ~= nil then
             if items[item.name] == nil then
                 items[item.name] = 0
+                items_count = items_count + 1
             end
 
             items[item.name] = items[item.name] + item.size
         end
     end
 
-    return items
+    return items, items_count
 end
 
 
@@ -67,12 +71,16 @@ local function getRecipe()
         print("Please insert the input items into the chest")
         print("Press enter when finished")
         io.read()
-        table.insert(recipe.input, getItemsInChest())
+        local items_in_chest, items_count = getItemsInChest()
+        table.insert(recipe.input, items_in_chest)
+        recipe.input_count = items_count
 
         print("Please insert the output items into the chest")
         print("Press enter when finished")
         io.read()
-        table.insert(recipe.output, getItemsInChest())
+        local items_in_chest, items_count = getItemsInChest()
+        table.insert(recipe.output, items_in_chest)
+        recipe.output_count = items_count
         
         local file = io.open(recipe_filename, "w")
         file:write(serialization.serialize(recipe))
@@ -81,6 +89,27 @@ local function getRecipe()
 
     return recipe
 end
+
+
+local function waitForCraft(recipe)
+    local craftReady = false
+    while not craftReady do
+        local items, items_count = getItemsInChest()
+        if items_count == recipe.input_count then
+            craftReady = true
+            for name, count in pairs(recipe.input) do
+                if items[name] ~= count then
+                    craftReady = false
+                end
+            end
+        end
+
+        if items_count > recipe.input_count then
+            error("The number of item types in the chest surpasses the number of item types in the recipe")
+        end
+    end
+end
+
 
 local recipe = getRecipe()
 
@@ -99,3 +128,6 @@ for name, count in pairs(recipe.output) do
 end
 
 components.waypoint.setLabel(output_string)
+
+waitForCraft(recipe)
+print("Crafting...")
