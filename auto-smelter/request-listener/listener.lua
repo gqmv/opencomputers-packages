@@ -18,6 +18,7 @@ local function getRecipe()
         recipe = serialization.unserialize(file:read("*a"))
         file:close()
     else
+        print("ola")
         io.stdout.write("No recipe file found.\n")
         local recipe = {input = {}, output = {}}
 
@@ -42,9 +43,7 @@ local function getRecipe()
         end
         
         local file = io.open(recipe_path, "w")
-        local ser = serialization.serialize(recipe)
-        print(ser)
-        file:write(ser)
+        file:write(serialization.serialize(recipe))
         file:close()
     end
 
