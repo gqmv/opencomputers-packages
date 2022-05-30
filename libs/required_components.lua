@@ -2,7 +2,7 @@ local requiredComponents = {}
 
 local components = requires("components")
 
-local function requiredComponents.getComponentsTable(required_components)
+function requiredComponents.getComponentsTable(required_components)
     local components = {}
     for i, component_name in pairs(required_components) do
         local current_component = nil
