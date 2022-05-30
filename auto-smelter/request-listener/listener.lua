@@ -87,15 +87,15 @@ local recipe = getRecipe()
 print("Successfully loaded the following recipe:")
 
 print("Inputs:")
-for i, input in pairs(recipe.input) do
-    print(input.name .. ": " .. input.count)
+for name, count in pairs(recipe.input) do
+    print(name .. ": " .. count)
 end
 
 local output_string = ""
 print("Outputs:")
-for i, output in pairs(recipe.output) do
-    output_string = output_string .. output.name
-    print(output.name .. ": " .. output.count)
+for name, count in pairs(recipe.output) do
+    output_string = output_string .. name
+    print(name .. ": " .. count)
 end
 
 components.waypoint.setLabel(output_string)
